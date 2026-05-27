@@ -192,12 +192,6 @@ void game_message(bool& gameover, logic& game_logic, ALLEGRO_FONT *font)
 	bool xwon = false, owon = false, tie = false;
 	game_logic.done(tie, xwon, owon);
 
-	std::cout << "font address: " << font << std::endl;
-
-	if (!font) {
-		printf("Font coulsn't load");
-	}
-
 	if (tie == true)
 	{
 		al_draw_text(font, al_map_rgb(255, 255, 255), 1, 400, ALLEGRO_ALIGN_LEFT, "The game is a tie -- screen will close shortly");
