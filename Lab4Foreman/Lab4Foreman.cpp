@@ -5,13 +5,15 @@
 #include <allegro5\allegro_primitives.h>	
 #include <allegro5\allegro_native_dialog.h> 
 #include "logic.h"
+#include <stdio.h>
+#include <iostream>
 
 
 void set_graphics_x_o(int x, int y, logic& game_logic);
 void draw_board();
 void draw_x(int x, int y);
 void draw_o(int x, int y);
-void game_message(bool& gameover, logic& game_logic);
+void game_message(bool& gameover, logic& game_logic, ALLEGRO_FONT *font);
 void turn_xo(int x, int y, int& turn, int boardx, int boardy, logic& game_logic);
 
 int main(void)
@@ -43,6 +45,8 @@ int main(void)
 	al_init_primitives_addon();
 	al_init_font_addon();
 	al_init_ttf_addon();
+
+	ALLEGRO_FONT* font = al_load_font("GROBOLD.ttf", 24, 0);
 
 	bool draw = false, done = false;;
 
@@ -80,7 +84,7 @@ int main(void)
 			}
 		}
 		draw_board();
-		game_message(gameover, game_logic);
+		game_message(gameover, game_logic, font);
 		if (draw)
 		{
 
@@ -122,7 +126,6 @@ void draw_o(int x, int y)
 }
 void turn_xo(int x, int y, int& turn, int boardx, int boardy, logic& game_logic)
 {
-	ALLEGRO_FONT* font = al_load_font("GROBOLD.ttf", 24, 0);
 	if (turn == 0)
 	{
 		if (game_logic.set_x(boardx, boardy) == true)
@@ -183,11 +186,17 @@ void set_graphics_x_o(int x, int y, logic& game_logic)
 	}
 }
 
-void game_message(bool& gameover, logic& game_logic)
+
+void game_message(bool& gameover, logic& game_logic, ALLEGRO_FONT *font)
 {
 	bool xwon = false, owon = false, tie = false;
 	game_logic.done(tie, xwon, owon);
-	ALLEGRO_FONT* font = al_load_font("GROBOLD.ttf", 24, 0);
+
+	std::cout << "font address: " << font << std::endl;
+
+	if (!font) {
+		printf("Font coulsn't load");
+	}
 
 	if (tie == true)
 	{
