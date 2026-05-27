@@ -6,10 +6,10 @@
 #include <allegro5\allegro_native_dialog.h> 
 #include "logic.h"
 #include <stdio.h>
-#include <iostream>
+#include <vector>
 
 
-void set_graphics_x_o(int x, int y, logic& game_logic);
+void set_graphics_x_o(int x, int y, logic& game_logic, int &turn);
 void draw_board();
 void draw_x(int x, int y);
 void draw_o(int x, int y);
@@ -23,6 +23,8 @@ int main(void)
 	bool gameover = false;
 	ALLEGRO_DISPLAY* Screen = NULL;
 	int width = 640, height = 480;
+	int turn = 0;
+	std::vector<std::pair<int, int>> empties;
 
 	if (!al_init())
 	{
@@ -73,8 +75,7 @@ int main(void)
 		{
 			done = true;
 		}
-		else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
-		{
+		else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
 			if (ev.mouse.button & 1)
 			{
 				posX = ev.mouse.x;
@@ -84,14 +85,33 @@ int main(void)
 			}
 		}
 		draw_board();
-		game_message(gameover, game_logic, font);
 		if (draw)
 		{
+			if (turn == 0) {
 
-			set_graphics_x_o(posX, posY, game_logic);
+				set_graphics_x_o(posX, posY, game_logic, turn);
 
-			draw = false;
+				draw = false;
+			}
 		}
+		if ((turn == 1) && (!gameover)){
+			
+			//bool done = false;
+			int x;
+			int y;
+			std::srand(time(0));
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					if(game_logic.getChar(i, j) == 'n') {
+						empties.push_back({ i, j });
+					}
+				}
+			}
+			int choice = rand() % empties.size();
+			set_graphics_x_o((empties[choice].first + 1) * 200, (empties[choice].second + 1) * 120, game_logic, turn);
+			empties.clear();
+		}
+		game_message(gameover, game_logic, font);
 		al_flip_display();
 	}
 	al_rest(5.0);
@@ -143,9 +163,8 @@ void turn_xo(int x, int y, int& turn, int boardx, int boardy, logic& game_logic)
 		}
 	}
 }
-void set_graphics_x_o(int x, int y, logic& game_logic)
+void set_graphics_x_o(int x, int y, logic& game_logic, int &turn)
 {
-	static int turn = 0;
 	if ((x < 213) && (y < 125))
 	{
 		turn_xo(106, 62, turn, 0, 0, game_logic);
@@ -174,7 +193,6 @@ void set_graphics_x_o(int x, int y, logic& game_logic)
 	else if ((x < 213) && (y > 250) && (y < 375))
 	{
 		turn_xo(106, 314, turn, 2, 0, game_logic);
-
 	}
 	else if ((x > 213) && (x < 426) && (y > 250) && (y < 375))
 	{
@@ -184,6 +202,7 @@ void set_graphics_x_o(int x, int y, logic& game_logic)
 	{
 		turn_xo(533, 314, turn, 2, 2, game_logic);
 	}
+
 }
 
 

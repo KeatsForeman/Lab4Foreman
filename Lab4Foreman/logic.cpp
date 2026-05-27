@@ -23,8 +23,13 @@ bool logic::set_o(int x, int y)
 	{
 		board[x][y] = 'o';
 		return true;
+	
 	}
+	
 	return false;
+}
+char logic::getChar(int x, int y) {
+	return board[x][y];
 }
 void logic::done(bool &tie, bool &xwon, bool &owon)
 {
