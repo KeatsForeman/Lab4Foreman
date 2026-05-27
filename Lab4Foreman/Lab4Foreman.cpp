@@ -24,7 +24,7 @@ int main(void)
 	ALLEGRO_DISPLAY* Screen = NULL;
 	int width = 640, height = 480;
 	int turn = 0;
-	std::vector<std::pair<int, int>> empties;
+
 
 	if (!al_init())
 	{
@@ -64,9 +64,9 @@ int main(void)
 
 	game_logic.setup();
 	draw_board();
-	//game_message(gameover, game_logic);
 
 	al_flip_display();
+	std::srand(time(0));
 	while (!done && !gameover)
 	{
 		ALLEGRO_EVENT ev;
@@ -94,12 +94,9 @@ int main(void)
 				draw = false;
 			}
 		}
-		if ((turn == 1) && (!gameover)){
-			
-			//bool done = false;
-			int x;
-			int y;
-			std::srand(time(0));
+		if (turn == 1){
+			std::vector<std::pair<int, int>> empties;
+			//gets empty spaces, used to reduce time guessing randomly
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; j < 3; j++) {
 					if(game_logic.getChar(i, j) == 'n') {
@@ -107,9 +104,12 @@ int main(void)
 					}
 				}
 			}
-			int choice = rand() % empties.size();
-			set_graphics_x_o((empties[choice].first + 1) * 200, (empties[choice].second + 1) * 120, game_logic, turn);
-			empties.clear();
+			if (!empties.empty()) {
+				int choice = rand() % empties.size();
+				set_graphics_x_o((empties[choice].second + 1) * 200, (empties[choice].first + 1) * 120, game_logic, turn);
+			}
+			else
+				gameover = true;
 		}
 		game_message(gameover, game_logic, font);
 		al_flip_display();
